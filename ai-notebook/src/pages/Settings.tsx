@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface LLMSettings {
   provider: 'openai' | 'anthropic' | 'custom';
@@ -16,6 +17,7 @@ const DEFAULT_SETTINGS: LLMSettings = {
 };
 
 export default function Settings() {
+  const { t } = useTranslation();
   const [settings, setSettings] = useState<LLMSettings>(DEFAULT_SETTINGS);
   const [showApiKey, setShowApiKey] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -39,15 +41,15 @@ export default function Settings() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem('llm_settings', JSON.stringify(settings));
-    setMessage({ type: 'success', text: 'Settings saved successfully' });
+    setMessage({ type: 'success', text: t('settings_saved') });
     setTimeout(() => setMessage(null), 3000);
   };
 
   return (
     <div className="p-8 max-w-2xl mx-auto">
       <header className="mb-8 border-b border-border pb-6">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Settings</h1>
-        <p className="text-muted-foreground">Configure your AI model and preferences.</p>
+        <h1 className="text-3xl font-bold tracking-tight mb-2">{t('settings_title', 'Settings')}</h1>
+        <p className="text-muted-foreground">{t('settings_desc', 'Configure your AI model and preferences.')}</p>
       </header>
 
       {message && (
@@ -66,7 +68,7 @@ export default function Settings() {
         <div className="p-6 rounded-xl bg-card border border-border space-y-6">
           <div className="grid gap-2">
             <label htmlFor="provider" className="text-sm font-medium">
-              Provider
+              {t('provider', 'Provider')}
             </label>
             <select
               id="provider"
@@ -83,7 +85,7 @@ export default function Settings() {
 
           <div className="grid gap-2">
             <label htmlFor="baseUrl" className="text-sm font-medium">
-              Base URL
+              {t('base_url', 'Base URL')}
             </label>
             <input
               id="baseUrl"
@@ -98,7 +100,7 @@ export default function Settings() {
 
           <div className="grid gap-2">
             <label htmlFor="apiKey" className="text-sm font-medium">
-              API Key
+              {t('api_key', 'API Key')}
             </label>
             <div className="relative">
               <input
@@ -122,7 +124,7 @@ export default function Settings() {
 
           <div className="grid gap-2">
             <label htmlFor="model" className="text-sm font-medium">
-              Model Name
+              {t('model_name', 'Model Name')}
             </label>
             <input
               id="model"
@@ -142,7 +144,7 @@ export default function Settings() {
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors"
           >
             <Save className="w-4 h-4" />
-            Save Settings
+            {t('save_settings', 'Save Settings')}
           </button>
         </div>
       </form>

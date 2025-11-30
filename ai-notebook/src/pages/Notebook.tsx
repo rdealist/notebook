@@ -7,6 +7,7 @@ import {
 import { Notebook, NotebookService } from '../lib/notebookService';
 import { AiService } from '../lib/aiService';
 import ReactMarkdown from 'react-markdown';
+import { useTranslation } from 'react-i18next';
 
 interface ChatMessage {
     role: 'user' | 'assistant';
@@ -14,6 +15,7 @@ interface ChatMessage {
 }
 
 export default function NotebookPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [notebook, setNotebook] = useState<Notebook | undefined>(undefined);
   const [isAddingSource, setIsAddingSource] = useState(false);
@@ -54,7 +56,7 @@ export default function NotebookPage() {
 
   const deleteSource = (sourceId: string) => {
       if (!id || !notebook) return;
-      if (confirm('Delete this source?')) {
+      if (confirm(t('delete_source_confirm'))) {
           const updatedSources = notebook.sources.filter(s => s.id !== sourceId);
           NotebookService.update(id, { sources: updatedSources });
           setNotebook(NotebookService.getById(id));
@@ -100,7 +102,7 @@ export default function NotebookPage() {
   };
 
   if (!notebook) {
-      return <div className="p-8">Notebook not found</div>;
+      return <div className="p-8">{t('notebook_not_found')}</div>;
   }
 
   return (
@@ -115,7 +117,7 @@ export default function NotebookPage() {
             </div>
 
             <div className="p-4 flex items-center justify-between">
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sources</h3>
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('sources')}</h3>
                 <button
                     onClick={() => setIsAddingSource(true)}
                     className="p-1 hover:bg-accent rounded-md text-primary"
@@ -127,7 +129,7 @@ export default function NotebookPage() {
             <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
                 {notebook.sources.length === 0 ? (
                     <div className="text-center py-8 text-sm text-muted-foreground">
-                        No sources yet.
+                        {t('no_sources')}
                     </div>
                 ) : (
                     notebook.sources.map(source => (
@@ -139,7 +141,7 @@ export default function NotebookPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate">{source.title}</p>
-                                <p className="text-xs text-muted-foreground truncate">{source.type}</p>
+                                <p className="text-xs text-muted-foreground truncate">{t(`type_${source.type}`)}</p>
                             </div>
                             <button
                                 onClick={() => deleteSource(source.id)}
@@ -160,9 +162,9 @@ export default function NotebookPage() {
                     <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary">
                         <Sparkles className="w-8 h-8" />
                     </div>
-                    <h1 className="text-2xl font-bold mb-2">Notebook Guide</h1>
+                    <h1 className="text-2xl font-bold mb-2">{t('notebook_guide')}</h1>
                     <p className="text-muted-foreground max-w-md mb-8">
-                        I can help you analyze your sources. Ask me questions or generate a summary to get started.
+                        {t('notebook_guide_desc')}
                     </p>
 
                     <div className="flex gap-4">
@@ -172,7 +174,7 @@ export default function NotebookPage() {
                             className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <Sparkles className="w-4 h-4" />
-                            Generate Summary
+                            {t('generate_summary')}
                         </button>
                     </div>
                 </div>
@@ -202,7 +204,7 @@ export default function NotebookPage() {
                              <div className="bg-muted text-foreground max-w-3xl rounded-2xl px-6 py-4">
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                     <Sparkles className="w-4 h-4 animate-spin" />
-                                    Thinking...
+                                    {t('thinking')}
                                 </div>
                             </div>
                         </div>
@@ -217,7 +219,7 @@ export default function NotebookPage() {
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
-                        placeholder="Ask a question about your sources..."
+                        placeholder={t('ask_question_placeholder')}
                         disabled={isGenerating || notebook.sources.length === 0}
                         className="w-full pl-6 pr-12 py-4 rounded-full border border-input bg-card shadow-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
                     />
@@ -231,7 +233,7 @@ export default function NotebookPage() {
                 </form>
                 {notebook.sources.length === 0 && (
                     <p className="text-xs text-center text-muted-foreground mt-2">
-                        Add sources to start chatting.
+                        {t('add_sources_to_chat')}
                     </p>
                 )}
             </div>
@@ -242,7 +244,7 @@ export default function NotebookPage() {
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                 <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-xl p-6">
                     <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-semibold">Add Source</h3>
+                        <h3 className="text-lg font-semibold">{t('add_source')}</h3>
                         <button onClick={() => setIsAddingSource(false)}>
                             <X className="w-5 h-5 text-muted-foreground" />
                         </button>
@@ -261,31 +263,31 @@ export default function NotebookPage() {
                                             : 'text-muted-foreground hover:text-foreground'
                                     }`}
                                 >
-                                    {type}
+                                    {t(`type_${type}`)}
                                 </button>
                             ))}
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium mb-1 block">Title</label>
+                            <label className="text-sm font-medium mb-1 block">{t('title')}</label>
                             <input
                                 required
                                 value={newSourceTitle}
                                 onChange={e => setNewSourceTitle(e.target.value)}
                                 className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
-                                placeholder="Source Title"
+                                placeholder={t('source_title_placeholder')}
                             />
                         </div>
 
                         <div>
-                            <label className="text-sm font-medium mb-1 block">Content</label>
+                            <label className="text-sm font-medium mb-1 block">{t('content')}</label>
                             {sourceType === 'text' && (
                                 <textarea
                                     required
                                     value={newSourceContent}
                                     onChange={e => setNewSourceContent(e.target.value)}
                                     className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm min-h-[100px]"
-                                    placeholder="Paste text here..."
+                                    placeholder={t('paste_text_placeholder')}
                                 />
                             )}
                             {sourceType === 'link' && (
@@ -301,14 +303,14 @@ export default function NotebookPage() {
                             {sourceType === 'file' && (
                                 <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
                                     <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                                    <p className="text-sm text-muted-foreground">File upload simulation</p>
+                                    <p className="text-sm text-muted-foreground">{t('file_upload_simulation')}</p>
                                     <input
                                         // Mock file upload by just taking text for now
                                         type="text"
                                         value={newSourceContent}
                                         onChange={e => setNewSourceContent(e.target.value)}
                                         className="mt-4 w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
-                                        placeholder="Simulate file content here..."
+                                        placeholder={t('simulate_file_content')}
                                     />
                                 </div>
                             )}
@@ -319,7 +321,7 @@ export default function NotebookPage() {
                                 type="submit"
                                 className="px-4 py-2 bg-primary text-primary-foreground rounded-md font-medium text-sm hover:bg-primary/90"
                             >
-                                Add Source
+                                {t('add_source')}
                             </button>
                         </div>
                     </form>

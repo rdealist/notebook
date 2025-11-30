@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Plus, Notebook as NotebookIcon, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Notebook, NotebookService } from '../lib/notebookService';
+import { useTranslation } from 'react-i18next';
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [notebooks, setNotebooks] = useState<Notebook[]>([]);
   const [isCreating, setIsCreating] = useState(false);
@@ -25,7 +27,7 @@ export default function Dashboard() {
 
   const handleDelete = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this notebook?')) {
+    if (confirm(t('delete_confirm'))) {
       NotebookService.delete(id);
       setNotebooks(NotebookService.getAll());
     }
@@ -34,22 +36,22 @@ export default function Dashboard() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">My Notebooks</h1>
-        <p className="text-muted-foreground">Manage your research and study materials.</p>
+        <h1 className="text-3xl font-bold tracking-tight mb-2">{t('my_notebooks', 'My Notebooks')}</h1>
+        <p className="text-muted-foreground">{t('manage_materials', 'Manage your research and study materials.')}</p>
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {/* Create New Card */}
         {isCreating ? (
           <div className="flex flex-col h-48 p-6 rounded-xl border border-primary bg-card shadow-md">
-            <h3 className="font-semibold text-lg mb-4">New Notebook</h3>
+            <h3 className="font-semibold text-lg mb-4">{t('new_notebook', 'New Notebook')}</h3>
             <form onSubmit={handleCreate} className="flex-1 flex flex-col justify-between">
               <input
                 autoFocus
                 type="text"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="Enter title..."
+                placeholder={t('enter_title', 'Enter title...')}
                 className="w-full px-3 py-2 rounded-md border border-input text-sm bg-background"
               />
               <div className="flex justify-end gap-2 mt-4">
@@ -58,14 +60,14 @@ export default function Dashboard() {
                   onClick={() => setIsCreating(false)}
                   className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
                 >
-                  Cancel
+                  {t('cancel', 'Cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={!newTitle.trim()}
                   className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-md disabled:opacity-50"
                 >
-                  Create
+                  {t('create', 'Create')}
                 </button>
               </div>
             </form>
@@ -78,7 +80,7 @@ export default function Dashboard() {
             <div className="p-4 rounded-full bg-primary/5 group-hover:bg-primary/10 transition-colors mb-4">
               <Plus className="w-8 h-8 text-primary" />
             </div>
-            <span className="font-medium text-lg">New Notebook</span>
+            <span className="font-medium text-lg">{t('new_notebook', 'New Notebook')}</span>
           </button>
         )}
 
