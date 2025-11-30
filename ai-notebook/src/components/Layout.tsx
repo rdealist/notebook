@@ -2,26 +2,32 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { LayoutDashboard, Book, Settings } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { ThemeToggle } from './ThemeToggle';
+import { useTranslation } from 'react-i18next';
 
 function cn(...inputs: (string | undefined | null | false)[]) {
   return twMerge(clsx(inputs));
 }
 
 export default function Layout() {
+  const { t } = useTranslation();
   const navItems = [
-    { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/settings', icon: Settings, label: 'Settings' },
+    { to: '/', icon: LayoutDashboard, label: t('dashboard') },
+    { to: '/settings', icon: Settings, label: t('settings') },
   ];
 
   return (
     <div className="flex h-screen bg-background text-foreground font-sans overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 border-r border-border bg-card flex flex-col">
-        <div className="p-6 flex items-center gap-2 border-b border-border">
-          <div className="bg-primary/10 p-2 rounded-lg">
-            <Book className="w-6 h-6 text-primary" />
+        <div className="p-6 flex items-center gap-2 border-b border-border justify-between">
+          <div className="flex items-center gap-2">
+            <div className="bg-primary/10 p-2 rounded-lg">
+              <Book className="w-6 h-6 text-primary" />
+            </div>
+            <span className="font-bold text-lg tracking-tight">{t('app_title')}</span>
           </div>
-          <span className="font-bold text-lg tracking-tight">AI Notebook</span>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -44,10 +50,14 @@ export default function Layout() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-border space-y-4">
+           <div className="flex items-center justify-between px-2">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
           <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            System Ready
+            {t('system_ready')}
           </div>
         </div>
       </aside>
